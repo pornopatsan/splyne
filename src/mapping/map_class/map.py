@@ -1,7 +1,7 @@
 import pydeck
 
 from src.common.base import SplyneObject
-from src.mapping.map_class.view_state import ViewState
+from src.mapping.common.view_state import ViewState
 from src.mapping.layers import scatterplot
 
 
