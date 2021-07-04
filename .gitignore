@@ -133,3 +133,6 @@ dmypy.json
 
 # Jupyter Notebooks
 Notebooks/
+
+# Library temp files
+*.splyne-tmp.html

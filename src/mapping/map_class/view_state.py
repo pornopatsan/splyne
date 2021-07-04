@@ -16,8 +16,8 @@ class ViewState(SplyneObject):
     def __init__(self):
         super().__init__()
 
-        self.max_lat, self.min_lat = 90, -90
-        self.max_lon, self.min_lon = 180, -180
+        self.max_lat, self.min_lat = -90, 90
+        self.max_lon, self.min_lon = -180, 180
 
     def get_zoom(self):
 
@@ -48,6 +48,15 @@ class ViewState(SplyneObject):
             bearing=0, pitch=0,
             zoom=zoom,
         )
+
+    def update(self, points=None):
+        if points is None:
+            return
+        for point in points:
+            self.max_lat = max(self.max_lat, point['lat'])
+            self.min_lat = min(self.min_lat, point['lat'])
+            self.max_lon = max(self.max_lon, point['lon'])
+            self.min_lon = min(self.min_lon, point['lon'])
 
 
 if __name__ == '__main__':
