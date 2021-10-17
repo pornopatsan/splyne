@@ -1,3 +1,4 @@
+import abc
 import logging
 import warnings
 
@@ -6,6 +7,7 @@ class SplyneObject(object):
     """
     Base Class for all splyne classes
     """
+    __metaclass__ = abc.ABC
 
     def __init__(self):
 

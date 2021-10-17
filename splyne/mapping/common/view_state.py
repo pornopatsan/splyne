@@ -1,8 +1,18 @@
 import pydeck
 import haversine
 
-from src.common.base import SplyneObject
+from splyne.common.base import SplyneObject
 
+
+class BBox(SplyneObject):
+
+    def __init__(self, min_lat, max_lat, min_lon, max_lon):
+        super().__init__()
+        self.min_lat = min_lat
+        self.max_lat = max_lat
+        self.min_lon = min_lon
+        self.max_lon = max_lon
+        
 
 class ViewState(SplyneObject):
 
