@@ -4,6 +4,7 @@ from typing import Callable
 
 from splyne.common.base import SplyneObject
 
+
 class GeoPoint(SplyneObject):
 
     def __init__(self, lat, lon):
@@ -16,12 +17,12 @@ class GeoPoint(SplyneObject):
 
     @staticmethod
     def axiswise_aggregation(
-        first: 'GeoPoint', second: 'GeoPoint', 
+        first: 'GeoPoint', second: 'GeoPoint',
         func: Callable[[float, float], float]
     ) -> 'GeoPoint':
         """
         Return new GeoPoint, applying `func` to both `lat` and `lon` of inputs
-        You may prefet to use shortcuts fuctions such as 
+        You may prefet to use shortcuts fuctions such as
         >>> GeoPoint.axiswise_aggregation(GeoPoint(55.5, 37.7), GeoPoint(60.0, 40.0), max)
         GeoPoint(60.000000, 40.000000)
         >>> GeoPoint.axiswise_aggregation(GeoPoint(55.5, 37.7), GeoPoint(50.0, 40.0), max)
@@ -36,6 +37,7 @@ class GeoPoint(SplyneObject):
     @staticmethod
     def axiswise_max(first: 'GeoPoint', second: 'GeoPoint') -> 'GeoPoint':
         return GeoPoint.axiswise_aggregation(first, second, max)
+
 
 class BBox(SplyneObject):
 
@@ -68,7 +70,7 @@ class BBox(SplyneObject):
             (self.ur_point.lat, self.ur_point.lon),
             haversine.Unit.KILOMETERS
         )
-    
+
     @staticmethod
     def merge(first: 'BBox', second: 'BBox') -> 'BBox':
         """
