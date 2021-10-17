@@ -1,7 +1,7 @@
 import pydeck
 import haversine
 
-from src.common.base import SplyneObject
+from splyne.common.base import SplyneObject
 
 
 class ViewState(SplyneObject):
@@ -15,7 +15,6 @@ class ViewState(SplyneObject):
 
     def __init__(self):
         super().__init__()
-
         self.max_lat, self.min_lat = -90, 90
         self.max_lon, self.min_lon = -180, 180
 
@@ -57,7 +56,3 @@ class ViewState(SplyneObject):
             self.min_lat = min(self.min_lat, point['lat'])
             self.max_lon = max(self.max_lon, point['lon'])
             self.min_lon = min(self.min_lon, point['lon'])
-
-
-if __name__ == '__main__':
-    viewState = ViewState()

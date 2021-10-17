@@ -3,7 +3,8 @@ import copy
 import pandas as pd
 import pydeck
 
-from src.mapping.map_class.view_state import ViewState
+from splyne.mapping.common.view_state import ViewState
+from splyne.mapping.layers.base import BaseLayer
 
 
 DEFAULT_RADIUS = 10
@@ -23,6 +24,15 @@ DEFAULT_PARAMS = {
     'get_fill_color': 'color',
     'get_line_color': 'color',
 }
+
+
+class ScatterplotLayer(BaseLayer):
+
+    def __init__(self):
+        super().__init__()
+
+    def make_pydeck_layer() -> pydeck.Layer:
+        return None
 
 
 def apply_common_parsing(data):
