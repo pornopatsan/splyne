@@ -7,7 +7,7 @@ class SplyneObject(object):
     """
     Base Class for all splyne classes
     """
-    __metaclass__ = abc.ABC
+    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
 

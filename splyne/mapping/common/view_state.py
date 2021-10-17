@@ -4,16 +4,6 @@ import haversine
 from splyne.common.base import SplyneObject
 
 
-class BBox(SplyneObject):
-
-    def __init__(self, min_lat, max_lat, min_lon, max_lon):
-        super().__init__()
-        self.min_lat = min_lat
-        self.max_lat = max_lat
-        self.min_lon = min_lon
-        self.max_lon = max_lon
-        
-
 class ViewState(SplyneObject):
 
     # Zoom levels from pydeck in degrees
@@ -25,7 +15,6 @@ class ViewState(SplyneObject):
 
     def __init__(self):
         super().__init__()
-
         self.max_lat, self.min_lat = -90, 90
         self.max_lon, self.min_lon = -180, 180
 
@@ -67,7 +56,3 @@ class ViewState(SplyneObject):
             self.min_lat = min(self.min_lat, point['lat'])
             self.max_lon = max(self.max_lon, point['lon'])
             self.min_lon = min(self.min_lon, point['lon'])
-
-
-if __name__ == '__main__':
-    viewState = ViewState()
