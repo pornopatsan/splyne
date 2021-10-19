@@ -8,10 +8,10 @@ from splyne.common.base import SplyneObject
 class GeoPoint(SplyneObject):
 
     MIN_LAT = -90.0
-    MAX_LAT =  90.0
+    MAX_LAT = +90.0
     MIN_LON = -180.0
-    MAX_LON =  180.0
-    
+    MAX_LON = +180.0
+
     def __init__(self, lat, lon):
         super().__init__()
         if not (GeoPoint.MIN_LAT <= lat <= GeoPoint.MAX_LAT):
@@ -20,7 +20,7 @@ class GeoPoint(SplyneObject):
             raise ValueError("Longitude must be in [-180.0, 180.0] interval")
         self.lat = lat
         self.lon = lon
-        
+
     def __repr__(self):
         return "GeoPoint({lat:.6f}, {lon:6f})".format(lat=self.lat, lon=self.lon)
 
