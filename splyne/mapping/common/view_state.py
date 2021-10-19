@@ -1,7 +1,10 @@
 import pydeck
 import haversine
 
+from collections.abc import Iterable
+
 from splyne.common.base import SplyneObject
+from splyne.mapping.common.common import BBox, GeoPoint
 
 
 class ViewState(SplyneObject):
@@ -11,48 +14,62 @@ class ViewState(SplyneObject):
         360, 180, 90, 45, 22.5, 11.25, 5.625, 2.813, 1.406, 0.703,
         0.352, 0.176, 0.088, 0.044, 0.022, 0.011, 0.005, 0.003, 0.001, 0.0005,
     ]
-    EQUATOR_LENGTH = 40000
 
     def __init__(self):
+        """
+        View State object.
+        Designed to accumulate data, and automatically generate initial pydeck.ViewState,
+        which will cover all data in chart.
+        """
         super().__init__()
-        self.max_lat, self.min_lat = -90, 90
-        self.max_lon, self.min_lon = -180, 180
+        self.bbox = BBox()
 
-    def get_zoom(self):
+    def get_zoom_level(self):
+        """
+        Get initial zoom level for pydeck, to cever whole BBox.
+        >>> vs = ViewState()
+        >>> vs.get_zoom_level()
+        0
+        >>> vs.update(GeoPoint(55.5, 37.7))
+        >>> vs.get_zoom_level()
+        19
+        >>> vs.update(GeoPoint(55.8, 37.8))
+        >>> vs.get_zoom_level()
+        9
+        >>> vs.update(GeoPoint(90.0, 180.0))
+        >>> vs.get_zoom_level()
+        3
+        >>> vs.update(GeoPoint(-90.0, -180.0))
+        >>> vs.get_zoom_level()
+        0
+        """
+        if not self.bbox.initialized:
+            return 0
 
-        distance_km = haversine.haversine(
-            (self.max_lat, self.max_lon), (self.min_lat, self.min_lon)
-        )
-        distance_degrees = 360 * distance_km / self.EQUATOR_LENGTH
-        distance_degrees *= 1.2  # give some empty space shift in corners
-        total_levels = len(self.ZOOM_LEVELS)
+        distance_degrees = self.bbox.length(units=haversine.Unit.DEGREES)
+        distance_degrees *= 1.2  # Give some empty space shift in corners
+        total_levels = len(ViewState.ZOOM_LEVELS)
 
-        if distance_degrees < self.ZOOM_LEVELS[-1]:
+        if distance_degrees < ViewState.ZOOM_LEVELS[-1]:
             return total_levels - 1
-
         for i in range(total_levels - 1):
-            if self.ZOOM_LEVELS[i + 1] < distance_degrees <= self.ZOOM_LEVELS[i]:
-                return i - 1
-
+            if self.ZOOM_LEVELS[i + 1] <= distance_degrees < ViewState.ZOOM_LEVELS[i]:
+                return i
         return 0
 
-    def get_view_state(self):
-        center_lat = (self.max_lat + self.min_lat) / 2
-        center_lon = (self.max_lon + self.min_lon) / 2
-        zoom = self.get_zoom()
-
+    def get_view_state(self) -> pydeck.ViewState:
+        center = self.bbox.center()
+        zoom = self.get_zoom_level()
         return pydeck.ViewState(
-            latitude=center_lat,
-            longitude=center_lon,
+            latitude=center.lat,
+            longitude=center.lon,
             bearing=0, pitch=0,
             zoom=zoom,
         )
 
-    def update(self, points=None):
-        if points is None:
-            return
+    def update(self, point: GeoPoint):
+        self.bbox.update_with_point(point)
+
+    def update_multiple(self, points: Iterable[GeoPoint]):
         for point in points:
-            self.max_lat = max(self.max_lat, point['lat'])
-            self.min_lat = min(self.min_lat, point['lat'])
-            self.max_lon = max(self.max_lon, point['lon'])
-            self.min_lon = min(self.min_lon, point['lon'])
+            self.update(point)
