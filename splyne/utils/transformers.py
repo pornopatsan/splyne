@@ -1,4 +1,3 @@
-import copy
 import itertools
 
 from typing import Iterable, Callable, Any, Dict
@@ -33,7 +32,7 @@ def zip_into(
     """
     Given an iterable of items and values of the same size.
     Make inerator, that sequentially inserts values into items on given key.
-    Rewrites key if it already exists. 
+    Rewrites key if it already exists.
     >>> data = [{'a': 1}, {'a': 2}, {'a': 3}]
     >>> list(zip_into(data, 'b', [3, 4, 5]))
     [{'a': 1, 'b': 3}, {'a': 2, 'b': 4}, {'a': 3, 'b': 5}]

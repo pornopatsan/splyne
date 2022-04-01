@@ -9,13 +9,14 @@ from typing import Iterable, Dict, Any
 from splyne.mapping.map_class.map import Map
 from splyne.utils import transformers
 
+
 def transform_with_format_detection(
     data=None,
-    x=None, 
-    y=None, 
+    x=None,
+    y=None,
     hue=None,
     colors=None,
-    sizes=None,  
+    sizes=None,
 ) -> Iterable[Dict[str, Any]]:
     """
     >>> data = [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
@@ -42,8 +43,8 @@ def transform_with_format_detection(
 
 def scatterplot(
     data=None,
-    x=None, 
-    y=None, 
+    x=None,
+    y=None,
     hue=None,
     colors=None,
     sizes=None,
@@ -52,24 +53,24 @@ def scatterplot(
     """
     Possible input formats:
     1) `data` = pd.DataFrame or Iterable of Dicts.
-    `x`, `y` = column names of Latitude and Longtitude. 
+    `x`, `y` = column names of Latitude and Longtitude.
     By default, columns names are `lat` and `lon`
-    Examples: 
+    Examples:
     `>>> data = [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
     `>>> scatterplot(data=data)
     `>>> data = [{'a': 55.7, 'b': 37.8}, {'a': 55.8, 'b': 37.9}]
     `>>> scatterplot(data=data, x='b', y='a')
-    
+
     2) `x`, `y` = pd.Series or Iterable of float.
     `>>> scatterplot(x=[37.8, 37.9], y=[55.7, 55.8])
-    
+
     3) `data` = iterable of lists/tuples
     """
     if data is None and x is None and y is None:
         raise ValueError("No data provided.")
     elif data is None and (x is None or y is None):
         raise ValueError("Both `x` and `y` must be provided")
-    
+
     map = Map()
     data = transform_with_format_detection(data, x, y,  hue, colors, sizes)
     map.add_scatterplot_layer(data, **kwargs)
