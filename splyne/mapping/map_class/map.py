@@ -1,8 +1,7 @@
 import pandas as pd
 import pydeck
 
-from typing import Dict, Any, Union
-from collections.abc import Iterable
+from typing import Dict, Any, Union, Iterable
 
 from splyne.common.base import SplyneObject
 from splyne.mapping.common.view_state import ViewState
@@ -25,7 +24,7 @@ class Map(SplyneObject):
         elif isinstance(data, Iterable):
             return data
         else:
-            raise ValueError('Data must be a `pd.DataFrame` of `Iterable[Dict[str, Any]]`')
+            raise TypeError('Data must be a `pd.DataFrame` of `Iterable[Dict[str, Any]]`')
 
     def add_scatterplot_layer(
         self,
@@ -51,8 +50,6 @@ if __name__ == '__main__':
         data=[
             {'lat': 55.5, 'lon': 37.7, 'color': [255, 0, 0]},
             {'lat': 55.9, 'lon': 37.9, 'color': [0, 255, 0]},
-            # {'lat': 89.0, 'lon': 179.0},
-            # {'lat': -89.0, 'lon': -179.0},
         ],
         get_color='color',
     )

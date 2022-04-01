@@ -1,13 +1,14 @@
 import copy
+import functools
 
 import pydeck
 
-from collections.abc import Iterable
-from typing import Any
+from typing import Iterable, Any
 
 from splyne.mapping.common.common import GeoPoint
 from splyne.mapping.common.view_state import ViewState
 from splyne.mapping.layers.base import BaseLayer
+from splyne.utils.transformers import make_pipe
 
 
 class ScatterplotLayer(BaseLayer):
@@ -40,9 +41,11 @@ class ScatterplotLayer(BaseLayer):
         self.pydeck_kwargs = ScatterplotLayer.DEFAULT_PARAMS
         self.pydeck_kwargs.update(kwargs)
 
-        # Parse Data
-        self.data = copy.deepcopy(data)
-        self.data = self._update_view_state(self.data, view_state)
+        data_tranformer = make_pipe(
+            copy.deepcopy,
+            functools.partial(self._update_view_state, view_state=view_state),
+        )
+        self.data = data_tranformer(data)
 
     def _update_view_state(self, data: Iterable[Any], view_state: ViewState):
         for item in data:
