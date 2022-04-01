@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "splyne"
+version = "0.0.3"
+description = "Python visualization library for Geo"
+authors = ["Pornopatsan <sapaeff@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+haversine = "^2.5.1"
+numpy = "^1.22.3"
+pandas = "^1.4.1"
+pydeck = "^0.7.1"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+pytest = "^6.2.5"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

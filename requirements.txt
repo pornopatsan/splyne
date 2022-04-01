@@ -1,6 +1,0 @@
-flake8
-haversine
-numpy
-pandas
-pydeck
-pytest
