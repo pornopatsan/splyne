@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "splyne"
-version = "0.0.3"
+version = "0.0.4"
 description = "Python visualization library for Geo"
 authors = ["Pornopatsan <sapaeff@gmail.com>"]
 
