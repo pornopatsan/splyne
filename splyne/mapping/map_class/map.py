@@ -24,7 +24,10 @@ class Map(SplyneObject):
         elif isinstance(data, Iterable):
             return data
         else:
-            raise TypeError('Data must be a `pd.DataFrame` of `Iterable[Dict[str, Any]]`')
+            raise TypeError(
+                'Data must be a `pd.DataFrame` of `Iterable[Dict[str, Any]]`, '
+                f'got `{type(data)}`, `{data}`'
+            )
 
     def add_scatterplot_layer(
         self,
@@ -32,7 +35,9 @@ class Map(SplyneObject):
         **kwargs,
     ):
         data = self.make_iterable_of_dicts(data)
-        layer = scatterplot.ScatterplotLayer(data, self.viewState, **kwargs)
+        layer = scatterplot.ScatterplotLayer(
+            data, self.viewState, **kwargs
+        )
         self.layers.append(layer.make_pydeck_layer())
 
     def display(self):
@@ -42,15 +47,3 @@ class Map(SplyneObject):
             map_style=pydeck.map_styles.LIGHT,
         )
         return chart.to_html('.splyne-tmp.html')
-
-
-if __name__ == '__main__':
-    map = Map()
-    map.add_scatterplot_layer(
-        data=[
-            {'lat': 55.5, 'lon': 37.7, 'color': [255, 0, 0]},
-            {'lat': 55.9, 'lon': 37.9, 'color': [0, 255, 0]},
-        ],
-        get_color='color',
-    )
-    map.display()

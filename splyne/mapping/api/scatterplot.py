@@ -6,6 +6,7 @@ Supports different input formats.
 
 from typing import Iterable, Dict, Any
 
+from splyne.common.coloring import ColorGenerator
 from splyne.mapping.map_class.map import Map
 from splyne.utils import transformers
 
@@ -34,6 +35,9 @@ def transform_with_format_detection(
         data = transformers.rename(data, x, 'lat')
     if isinstance(y, str):
         data = transformers.rename(data, y, 'lon')
+    if hue is not None:
+        cgen = ColorGenerator()
+        colors = (cgen.get_color(color[hue]) for color in data)
     if colors is not None:
         data = transformers.zip_into(data, "color", colors)
     if sizes is not None:
@@ -74,4 +78,4 @@ def scatterplot(
     map = Map()
     data = transform_with_format_detection(data, x, y,  hue, colors, sizes)
     map.add_scatterplot_layer(data, **kwargs)
-    map.display()
+    return map.display()
