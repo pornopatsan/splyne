@@ -44,13 +44,24 @@ class ScatterplotLayer(BaseLayer):
         data_tranformer = make_pipe(
             copy.deepcopy,
             functools.partial(self._update_view_state, view_state=view_state),
+            self._update_kwargs,
         )
         self.data = data_tranformer(data)
 
-    def _update_view_state(self, data: Iterable[Any], view_state: ViewState):
+    def _update_kwargs(self, item: Any) -> Any:
+        if 'color' in item:
+            self.pydeck_kwargs['get_color'] = 'color'
+        if 'size' in item:
+            self.pydeck_kwargs['get_color'] = 'size'
+        return item
+
+    def _update_view_state(self, item: Any, view_state: ViewState) -> Any:
+        view_state.update(GeoPoint(item['lat'], item['lon']))
+        return item
+
+    def _update_view_state_from_iter(self, data: Iterable[Any], view_state: ViewState):
         for item in data:
-            view_state.update(GeoPoint(item['lat'], item['lon']))
-            yield item
+            yield self._update_view_state(item, view_state)
 
     def make_pydeck_layer(self) -> pydeck.Layer:
         return pydeck.Layer("ScatterplotLayer", data=list(self.data), **self.pydeck_kwargs)
