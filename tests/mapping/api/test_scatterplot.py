@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from splyne.mapping.api import scatterplot
+from splyne import scatterplot
 
 import tests.common as common
 
@@ -55,7 +55,7 @@ def test_scatterplot_formatted_small(points_example_small):
         "mapStyle": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         "views": [{"@@type": "MapView", "controller": True}]
     }
-    result = scatterplot.scatterplot(
+    result = scatterplot(
         data=points_example_small
     )
     common.assert_equal_jsons(json.loads(result), expected_result)
@@ -80,21 +80,7 @@ def test_scatterplot_formatted_medium(points_example_medium):
         "mapStyle": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         "views": [{"@@type": "MapView", "controller": True}]
     }
-    result = scatterplot.scatterplot(
-        data=points_example_medium, hue='key'
+    result = scatterplot(
+        data=points_example_medium, color='key'
     )
     common.assert_equal_jsons(json.loads(result), expected_result)
-
-
-if __name__ == '__main__':
-    scatterplot.scatterplot(
-        data=[
-            {'lat': 55.7, 'lon': 37.8, 'key': 1},
-            {'lat': 56.4, 'lon': 35.9, 'key': 2},
-            {'lat': 55.7, 'lon': 38.9, 'key': 2},
-            {'lat': 55.9, 'lon': 34.2, 'key': 1},
-            {'lat': 53.3, 'lon': 36.4, 'key': 3},
-            {'lat': 55.9, 'lon': 37.7, 'key': 2},
-            {'lat': 54.9, 'lon': 38.0, 'key': 1},
-        ], hue='key'
-    )
