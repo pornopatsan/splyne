@@ -4,6 +4,8 @@ Used for bref overview of data.
 Supports different input formats.
 """
 
+import copy
+
 import pandas as pd
 
 from typing import Iterable, Dict, Any, Union, Optional
@@ -19,7 +21,6 @@ def transform_with_format_detection(
     lon: Optional[Union[str, Iterable]] = None,
     color: Optional[Union[str, Iterable]] = None,
     size: Optional[Union[str, Iterable]] = None,
-    **kwargs
 ) -> Iterable[Dict[str, Any]]:
     """
     >>> data = [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
@@ -41,13 +42,14 @@ def transform_with_format_detection(
         data = transformers.rename(data, lon, 'lon')
     if color is not None:
         if isinstance(color, str):
-            color_name = color
+            color_key = color
             cgen = ColorGenerator()
-            color = (cgen.get_color(item[color_name]) for item in data)
+            color = (cgen.get_color(item[color_key]) for item in data)
         data = transformers.zip_into(data, "color", color)
     if size is not None:
         if isinstance(size, str):
-            size = (item[size] for item in data)
+            size_key = size
+            size = (item[size_key] for item in data)
         data = transformers.zip_into(data, "size", size)
     return data
 
@@ -58,7 +60,6 @@ def scatterplot(
     lon: Optional[Union[str, Iterable]] = None,
     color: Optional[Union[str, Iterable]] = None,
     size: Optional[Union[str, Iterable]] = None,
-    **kwargs
 ):
     """
     Possible input formats:
@@ -80,9 +81,10 @@ def scatterplot(
         raise ValueError("Both `lon` and lat` must be provided (or None of them)")
 
     map = Map()
+    data = copy.deepcopy(data)
     data = transform_with_format_detection(
         data=data, lat=lat, lon=lon,
         color=color, size=size
     )
-    map.add_scatterplot_layer(data, **kwargs)
+    map.add_scatterplot_layer(data)
     return map.display()

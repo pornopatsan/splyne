@@ -52,7 +52,7 @@ class ScatterplotLayer(BaseLayer):
         if 'color' in item:
             self.pydeck_kwargs['get_color'] = 'color'
         if 'size' in item:
-            self.pydeck_kwargs['get_color'] = 'size'
+            self.pydeck_kwargs['get_size'] = 'size'
         return item
 
     def _update_view_state(self, item: Any, view_state: ViewState) -> Any:
