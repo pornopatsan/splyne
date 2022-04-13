@@ -4,7 +4,11 @@ Used for bref overview of data.
 Supports different input formats.
 """
 
-from typing import Iterable, Dict, Any
+import copy
+
+import pandas as pd
+
+from typing import Iterable, Dict, Any, Union, Optional
 
 from splyne.common.coloring import ColorGenerator
 from splyne.mapping.map_class.map import Map
@@ -12,47 +16,50 @@ from splyne.utils import transformers
 
 
 def transform_with_format_detection(
-    data=None,
-    x=None,
-    y=None,
-    hue=None,
-    colors=None,
-    sizes=None,
+    data: Optional[Any] = None,
+    lat: Optional[Union[str, Iterable]] = None,
+    lon: Optional[Union[str, Iterable]] = None,
+    color: Optional[Union[str, Iterable]] = None,
+    size: Optional[Union[str, Iterable]] = None,
 ) -> Iterable[Dict[str, Any]]:
     """
     >>> data = [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
     >>> list(transform_with_format_detection(data=data))
     [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
     >>> data = [{'a': 55.7, 'b': 37.8}, {'a': 55.8, 'b': 37.9}]
-    >>> list(transform_with_format_detection(data=data, x='a', y='b'))
+    >>> list(transform_with_format_detection(data=data, lat='a', lon='b'))
     [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
-    >>> list(transform_with_format_detection(x=[55.7, 55.8], y=[37.8, 37.9]))
+    >>> list(transform_with_format_detection(lat=[55.7, 55.8], lon=[37.8, 37.9]))
     [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
     """
     if data is None:
-        data = transformers.merge(lat=x, lon=y)
-    if isinstance(x, str):
-        data = transformers.rename(data, x, 'lat')
-    if isinstance(y, str):
-        data = transformers.rename(data, y, 'lon')
-    if hue is not None:
-        cgen = ColorGenerator()
-        colors = (cgen.get_color(color[hue]) for color in data)
-    if colors is not None:
-        data = transformers.zip_into(data, "color", colors)
-    if sizes is not None:
-        data = transformers.zip_into(data, "size", sizes)
+        data = transformers.merge(lat=lat, lon=lon)
+    elif isinstance(data, pd.DataFrame):
+        data = data.to_dict('records')
+    if isinstance(lat, str):
+        data = transformers.rename(data, lat, 'lat')
+    if isinstance(lon, str):
+        data = transformers.rename(data, lon, 'lon')
+    if color is not None:
+        if isinstance(color, str):
+            color_key = color
+            cgen = ColorGenerator()
+            color = (cgen.get_color(item[color_key]) for item in data)
+        data = transformers.zip_into(data, "color", color)
+    if size is not None:
+        if isinstance(size, str):
+            size_key = size
+            size = (item[size_key] for item in data)
+        data = transformers.zip_into(data, "size", size)
     return data
 
 
 def scatterplot(
-    data=None,
-    x=None,
-    y=None,
-    hue=None,
-    colors=None,
-    sizes=None,
-    **kwargs
+    data: Optional[Any] = None,
+    lat: Optional[Union[str, Iterable]] = None,
+    lon: Optional[Union[str, Iterable]] = None,
+    color: Optional[Union[str, Iterable]] = None,
+    size: Optional[Union[str, Iterable]] = None,
 ):
     """
     Possible input formats:
@@ -63,19 +70,21 @@ def scatterplot(
     `>>> data = [{'lat': 55.7, 'lon': 37.8}, {'lat': 55.8, 'lon': 37.9}]
     `>>> scatterplot(data=data)
     `>>> data = [{'a': 55.7, 'b': 37.8}, {'a': 55.8, 'b': 37.9}]
-    `>>> scatterplot(data=data, x='b', y='a')
+    `>>> scatterplot(data=data, lon='b', lat='a')
 
-    2) `x`, `y` = pd.Series or Iterable of float.
-    `>>> scatterplot(x=[37.8, 37.9], y=[55.7, 55.8])
-
-    3) `data` = iterable of lists/tuples
+    2) `lat`, `lon` = Iterable of float.
+    `>>> scatterplot(lon=[37.8, 37.9], lat=[55.7, 55.8])
     """
-    if data is None and x is None and y is None:
+    if data is None and (lat is None and lon is None):
         raise ValueError("No data provided.")
-    elif data is None and (x is None or y is None):
-        raise ValueError("Both `x` and `y` must be provided")
+    elif data is None and (lat is None or lon is None):
+        raise ValueError("Both `lon` and lat` must be provided (or None of them)")
 
     map = Map()
-    data = transform_with_format_detection(data, x, y,  hue, colors, sizes)
-    map.add_scatterplot_layer(data, **kwargs)
+    data = copy.deepcopy(data)
+    data = transform_with_format_detection(
+        data=data, lat=lat, lon=lon,
+        color=color, size=size
+    )
+    map.add_scatterplot_layer(data)
     return map.display()
