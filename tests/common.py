@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from pydeck import Deck
 
@@ -11,7 +11,7 @@ def mock_prepare_deck_class() -> None:
     Deck.to_html = deck_to_json_mock
 
 
-def assert_equal_jsons(first: Any, second: Any, skip_keys: Optional[list[str]] = None):
+def assert_equal_jsons(first: Any, second: Any, skip_keys: Optional[List[str]] = None):
     """
     Given two jsons of pydeck.Deck, return if they are equal
     >>> assert_equal_jsons({}, {})

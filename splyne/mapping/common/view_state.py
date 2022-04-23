@@ -1,7 +1,7 @@
 import pydeck
 import haversine
 
-from collections.abc import Iterable
+from typing import Iterable
 
 from splyne.common.base import SplyneObject
 from splyne.mapping.common.common import BBox, GeoPoint
@@ -67,9 +67,9 @@ class ViewState(SplyneObject):
             zoom=zoom,
         )
 
-    def update(self, point: GeoPoint):
+    def update(self, point: 'GeoPoint'):
         self.bbox.update_with_point(point)
 
-    def update_multiple(self, points: Iterable[GeoPoint]):
+    def update_multiple(self, points: Iterable['GeoPoint']):
         for point in points:
             self.update(point)

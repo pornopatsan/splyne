@@ -52,8 +52,8 @@ class BBox(SplyneObject):
 
     def __init__(
         self,
-        ll_point: Optional[GeoPoint] = None,
-        ur_point: Optional[GeoPoint] = None,
+        ll_point: Optional['GeoPoint'] = None,
+        ur_point: Optional['GeoPoint'] = None,
     ):
         """
         Initialize BBox with lower left corner and upper right corner.
@@ -112,7 +112,7 @@ class BBox(SplyneObject):
         else:
             raise ValueError("BBox is uninitialized")
 
-    def update_with_point(self, point: GeoPoint):
+    def update_with_point(self, point: 'GeoPoint'):
         """
         Updates BBox, to contain point inside it.
         If BBox is not initialized, initialize it.
